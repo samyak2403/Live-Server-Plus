@@ -1,0 +1,140 @@
+{
+  "name": "liveflow-pro",
+  "displayName": "LiveFlow Pro",
+  "description": "Advanced Live Server with WebSocket reload, HTTPS, QR code sharing, SPA support, and browser sync.",
+  "version": "1.0.0",
+  "publisher": "liveflow",
+  "icon": "assets/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Debuggers"
+  ],
+  "keywords": [
+    "live server",
+    "live reload",
+    "websocket",
+    "hot reload",
+    "development server",
+    "browser sync",
+    "https",
+    "spa"
+  ],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "liveflow.start",
+        "title": "LiveFlow Pro: Start Server",
+        "icon": "$(play)"
+      },
+      {
+        "command": "liveflow.stop",
+        "title": "LiveFlow Pro: Stop Server",
+        "icon": "$(stop)"
+      },
+      {
+        "command": "liveflow.restart",
+        "title": "LiveFlow Pro: Restart Server",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "liveflow.openDashboard",
+        "title": "LiveFlow Pro: Open Dashboard",
+        "icon": "$(dashboard)"
+      }
+    ],
+    "configuration": {
+      "title": "LiveFlow Pro",
+      "properties": {
+        "liveflow.port": {
+          "type": "number",
+          "default": 5500,
+          "description": "Port to run the development server on (0 = auto-detect)."
+        },
+        "liveflow.https": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable HTTPS with a self-signed certificate."
+        },
+        "liveflow.autoOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open the browser when the server starts."
+        },
+        "liveflow.rootPath": {
+          "type": "string",
+          "default": "",
+          "description": "Root path to serve files from (relative to workspace root). Leave empty to use workspace root."
+        },
+        "liveflow.liveReload": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable live reload on file changes."
+        },
+        "liveflow.spaFallback": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable SPA fallback (serve index.html for all 404 routes)."
+        },
+        "liveflow.basePath": {
+          "type": "string",
+          "default": "/",
+          "description": "Custom base path for the server (e.g. /app/)."
+        },
+        "liveflow.showQRCode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show QR code for mobile access when server starts."
+        },
+        "liveflow.gzip": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable gzip compression for responses."
+        },
+        "liveflow.debounceDelay": {
+          "type": "number",
+          "default": 200,
+          "description": "Debounce delay (ms) for file change events."
+        },
+        "liveflow.browser": {
+          "type": "string",
+          "default": "",
+          "description": "Browser to open (e.g. 'chrome', 'firefox'). Leave empty for system default."
+        }
+      }
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "liveflow.start",
+          "when": "resourceExtname == .html",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint src --ext .js",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "eslint": "^8.56.0"
+  },
+  "dependencies": {
+    "chokidar": "^3.5.3",
+    "detect-port": "^1.5.1",
+    "qrcode-terminal": "^0.12.0",
+    "selfsigned": "^2.4.1",
+    "ws": "^8.16.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liveflow/liveflow-pro"
+  },
+  "license": "MIT"
+}
