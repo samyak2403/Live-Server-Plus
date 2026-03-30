@@ -3,7 +3,7 @@
   "displayName": "LiveFlow Pro",
   "description": "Advanced Live Server with WebSocket reload, HTTPS, QR code sharing, SPA support, and browser sync.",
   "version": "1.0.0",
-  "publisher": "liveflow",
+  "publisher": "samyak2403",
   "icon": "assets/icon.png",
   "engines": {
     "vscode": "^1.85.0"
@@ -22,7 +22,9 @@
     "https",
     "spa"
   ],
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./src/extension.js",
   "contributes": {
     "commands": [
@@ -123,6 +125,7 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.7.1",
     "eslint": "^8.56.0"
   },
   "dependencies": {

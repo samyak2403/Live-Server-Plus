@@ -1,0 +1,9 @@
+.node/
+node_modules/
+.git/
+.gitignore
+.eslintrc.json
+setup.ps1
+test.js
+**/*.vsix
+.vscode/tasks.json
