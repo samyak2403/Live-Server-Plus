@@ -1,6 +1,6 @@
 {
-  "name": "live-server-pro",
-  "displayName": "Live Server Pro",
+  "name": "liveflow-pro",
+  "displayName": "LiveFlow Pro",
   "description": "⚡ A blazing-fast live development server with CSS hot-swap, WebSocket reload, HTTPS, QR code mobile access, SPA support, gzip compression, and a beautiful dashboard — the ultimate Live Server for modern web development.",
   "version": "1.0.1",
   "publisher": "samyak2403",
@@ -30,47 +30,47 @@
     "commands": [
       {
         "command": "liveflow.toggle",
-        "title": "Live Server Pro: Go Live / Stop",
+        "title": "LiveFlow Pro: Go Live / Stop",
         "icon": "$(broadcast)"
       },
       {
         "command": "liveflow.start",
-        "title": "Open with Live Server Pro",
+        "title": "Open with LiveFlow Pro",
         "icon": "$(play)"
       },
       {
         "command": "liveflow.openFile",
-        "title": "Open with Live Server Pro",
+        "title": "Open with LiveFlow Pro",
         "icon": "$(play)"
       },
       {
         "command": "liveflow.stop",
-        "title": "Live Server Pro: Stop Server",
+        "title": "LiveFlow Pro: Stop Server",
         "icon": "$(stop)"
       },
       {
         "command": "liveflow.restart",
-        "title": "Live Server Pro: Restart Server",
+        "title": "LiveFlow Pro: Restart Server",
         "icon": "$(refresh)"
       },
       {
         "command": "liveflow.openDashboard",
-        "title": "Live Server Pro: Open Dashboard",
+        "title": "LiveFlow Pro: Open Dashboard",
         "icon": "$(dashboard)"
       },
       {
         "command": "liveflow.showQR",
-        "title": "Live Server Pro: Show QR Code",
+        "title": "LiveFlow Pro: Show QR Code",
         "icon": "$(qr)"
       },
       {
         "command": "liveflow.statusMenu",
-        "title": "Live Server Pro: Server Options",
+        "title": "LiveFlow Pro: Server Options",
         "icon": "$(radio-tower)"
       }
     ],
     "configuration": {
-      "title": "Live Server Pro",
+      "title": "LiveFlow Pro",
       "properties": {
         "liveflow.port": {
           "type": "number",
@@ -141,24 +141,24 @@
         {
           "command": "liveflow.openFile",
           "when": "resourceExtname == .html",
-          "group": "Live Server Pro@1"
+          "group": "LiveFlow Pro@1"
         },
         {
           "command": "liveflow.stop",
           "when": "resourceExtname == .html",
-          "group": "Live Server Pro@2"
+          "group": "LiveFlow Pro@2"
         }
       ],
       "explorer/context": [
         {
           "command": "liveflow.openFile",
           "when": "resourceExtname == .html",
-          "group": "Live Server Pro@1"
+          "group": "LiveFlow Pro@1"
         },
         {
           "command": "liveflow.openFile",
           "when": "resourceExtname == .htm",
-          "group": "Live Server Pro@1"
+          "group": "LiveFlow Pro@1"
         }
       ]
     }
@@ -181,7 +181,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/samyak2403/live-server-pro"
+    "url": "https://github.com/samyak2403/Live-Server-Plus"
   },
   "license": "MIT"
 }
