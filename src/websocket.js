@@ -1,5 +1,5 @@
 /**
- * LiveFlow Pro - WebSocket Server
+ * Live Server Pro - WebSocket Server
  *
  * Manages the WebSocket connections for:
  *   - CSS hot-swap (no full reload)
@@ -35,7 +35,7 @@ class WebSocketServer {
   attachToServer(httpServer) {
     this.wss = new WSServer({
       server: httpServer,
-      path: '/__liveflow_ws__',
+      path: '/__Live Server Pro_ws__',
     });
 
     // Grab the port after it starts
@@ -51,7 +51,7 @@ class WebSocketServer {
       setImmediate(() => {
         if (ws.readyState === 1) {
           ws.send(
-            JSON.stringify({ type: 'connected', message: 'LiveFlow Pro live-reload active' }),
+            JSON.stringify({ type: 'connected', message: 'Live Server Pro live-reload active' }),
             { binary: false }
           );
         }
@@ -72,7 +72,7 @@ class WebSocketServer {
       this.logger.error(`WebSocket server error: ${err.message}`);
     });
 
-    this.logger.info('WebSocket server attached (same port, path: /__liveflow_ws__)');
+    this.logger.info('WebSocket server attached (same port, path: /__Live Server Pro_ws__)');
   }
 
   /**
@@ -98,6 +98,13 @@ class WebSocketServer {
    */
   sendFullReload() {
     this._broadcast({ type: 'reload' });
+  }
+
+  /**
+   * Send a real-time HTML update without reloading.
+   */
+  sendHTMLUpdate(html) {
+    this._broadcast({ type: 'htmlUpdate', html });
   }
 
   /**

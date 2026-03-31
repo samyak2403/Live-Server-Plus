@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - Network Info
+﻿/**
+ * Live Server Pro - Network Info
  *
  * Detects the machine's LAN IP address for browser sync /
  * QR code sharing, so developers can open the site on

@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - Logger
+﻿/**
+ * Live Server Pro - Logger
  *
  * Wraps VS Code's OutputChannel to provide structured,
  * leveled logging with timestamps.

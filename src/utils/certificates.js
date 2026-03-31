@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - Self-Signed Certificate Generator
+﻿/**
+ * Live Server Pro - Self-Signed Certificate Generator
  *
  * Generates a self-signed TLS certificate for HTTPS mode.
  * Uses the `selfsigned` npm package for programmatic cert creation.
@@ -17,7 +17,7 @@ async function generateCertificates() {
   return new Promise((resolve, reject) => {
     const attrs = [
       { name: 'commonName', value: 'localhost' },
-      { name: 'organizationName', value: 'LiveFlow Pro Dev Server' },
+      { name: 'organizationName', value: 'Live Server Pro Dev Server' },
     ];
 
     const options = {

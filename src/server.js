@@ -1,5 +1,5 @@
 /**
- * LiveFlow Pro - HTTP/HTTPS Server
+ * Live Server Pro - HTTP/HTTPS Server
  *
  * Serves static files with:
  *   - Gzip compression
@@ -56,6 +56,26 @@ const MIME_TYPES = {
 
 // Extensions to gzip
 const COMPRESSIBLE = new Set(['.html', '.htm', '.css', '.js', '.mjs', '.json', '.svg', '.xml', '.txt', '.map']);
+
+// ─── File icon helper ──────────────────────────────────────────────────────
+function _getFileIcon(name) {
+  const ext = path.extname(name).toLowerCase();
+  const icons = {
+    '.html': '🌐', '.htm': '🌐',
+    '.css': '🎨',
+    '.js': '⚡', '.mjs': '⚡', '.ts': '⚡',
+    '.json': '📋',
+    '.md': '📝', '.txt': '📄',
+    '.png': '🖼️', '.jpg': '🖼️', '.jpeg': '🖼️', '.gif': '🖼️', '.webp': '🖼️', '.svg': '🖼️', '.ico': '🖼️',
+    '.mp4': '🎬', '.webm': '🎬',
+    '.mp3': '🎵', '.wav': '🎵', '.ogg': '🎵',
+    '.pdf': '📕',
+    '.zip': '📦', '.gz': '📦', '.tar': '📦',
+    '.xml': '📋',
+    '.woff': '🔠', '.woff2': '🔠', '.ttf': '🔠', '.eot': '🔠',
+  };
+  return icons[ext] || '📄';
+}
 
 // ─── Server class ──────────────────────────────────────────────────────────
 class Server {
@@ -153,6 +173,10 @@ class Server {
   stop() {
     return new Promise((resolve) => {
       if (this.httpServer) {
+        // Force close all open keep-alive connections so close() resolves immediately
+        if (this.httpServer.closeAllConnections) {
+          this.httpServer.closeAllConnections();
+        }
         this.httpServer.close(() => {
           this.httpServer = null;
           resolve();
@@ -179,7 +203,7 @@ class Server {
     // CORS headers (allow LAN access)
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('X-Powered-By', 'LiveFlow Pro');
+    res.setHeader('X-Powered-By', 'Live Server Pro');
 
     if (req.method === 'OPTIONS') {
       res.writeHead(204);
@@ -224,25 +248,41 @@ class Server {
    */
   async _serveFile(req, res, filePath, urlPath) {
     let targetPath = filePath;
+    let isDir = false;
 
-    // Check if path is a directory → try index.html
+    // Check if path is a directory → try index.html first
     try {
       const stat = fs.statSync(targetPath);
       if (stat.isDirectory()) {
-        targetPath = path.join(targetPath, 'index.html');
+        isDir = true;
+        const indexPath = path.join(targetPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+          // index.html found — serve it
+          targetPath = indexPath;
+        } else {
+          // No index.html — show directory listing
+          this._sendDirectoryListing(res, targetPath, urlPath);
+          return;
+        }
       }
     } catch {
-      // File does not exist — SPA fallback or 404
+      // Path does not exist at all
       if (this.spaFallback) {
-        targetPath = path.join(this.root, 'index.html');
-        this.logger.debug(`SPA fallback: ${urlPath} → index.html`);
+        const spaIndex = path.join(this.root, 'index.html');
+        if (fs.existsSync(spaIndex)) {
+          targetPath = spaIndex;
+          this.logger.debug(`SPA fallback: ${urlPath} → index.html`);
+        } else {
+          this._send404(res, urlPath);
+          return;
+        }
       } else {
         this._send404(res, urlPath);
         return;
       }
     }
 
-    // Check target file exists
+    // Final existence check (covers SPA/non-directory paths)
     if (!fs.existsSync(targetPath)) {
       if (this.spaFallback) {
         targetPath = path.join(this.root, 'index.html');
@@ -332,13 +372,13 @@ class Server {
 
   /**
    * Build the inline client script.
-   * Connects via the same port as HTTP using path /__liveflow_ws__.
+   * Connects via the same port as HTTP using path /__Live Server Pro_ws__.
    */
   _buildClientScript() {
     const proto = this.useHttps ? 'wss' : 'ws';
 
     return `
-/* LiveFlow Pro — Live Reload Client */
+/* Live Server Pro — Live Reload Client */
 (function() {
   var protocol = '${proto}';
   var host = window.location.hostname;
@@ -348,11 +388,11 @@ class Server {
   var maxReconnectInterval = 10000;
 
   function connect() {
-    var wsURL = protocol + '://' + host + (port ? ':' + port : '') + '/__liveflow_ws__';
+    var wsURL = protocol + '://' + host + (port ? ':' + port : '') + '/__Live Server Pro_ws__';
     ws = new WebSocket(wsURL);
 
     ws.addEventListener('open', function() {
-      console.log('[LiveFlow Pro] Connected to live-reload server');
+      console.log('[Live Server Pro] Connected to live-reload server');
       reconnectInterval = 1000; // reset backoff
     });
 
@@ -361,20 +401,26 @@ class Server {
       try { data = JSON.parse(event.data); } catch(e) { return; }
 
       if (data.type === 'reload') {
-        console.log('[LiveFlow Pro] Full reload triggered');
+        console.log('[Live Server Pro] Full reload triggered');
         window.location.reload();
       } else if (data.type === 'css') {
-        console.log('[LiveFlow Pro] CSS hot-swap:', data.file);
+        console.log('[Live Server Pro] CSS hot-swap:', data.file);
         hotSwapCSS(data.file);
       } else if (data.type === 'error') {
         showErrorOverlay(data.message, data.stack);
+      } else if (data.type === 'htmlUpdate') {
+        try {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(data.html, 'text/html');
+          document.body.innerHTML = doc.body.innerHTML;
+        } catch(e) {}
       } else if (data.type === 'connected') {
-        console.log('[LiveFlow Pro] Server:', data.message);
+        console.log('[Live Server Pro] Server:', data.message);
       }
     });
 
     ws.addEventListener('close', function() {
-      console.log('[LiveFlow Pro] Disconnected — reconnecting in ' + (reconnectInterval/1000) + 's...');
+      console.log('[Live Server Pro] Disconnected — reconnecting in ' + (reconnectInterval/1000) + 's...');
       setTimeout(connect, reconnectInterval);
       reconnectInterval = Math.min(reconnectInterval * 1.5, maxReconnectInterval);
     });
@@ -408,7 +454,7 @@ class Server {
   function showErrorOverlay(message, stack) {
     removeErrorOverlay();
     var overlay = document.createElement('div');
-    overlay.id = '__liveflow_error_overlay__';
+    overlay.id = '__Live Server Pro_error_overlay__';
     overlay.style.cssText = [
       'position:fixed','top:0','left:0','right:0','bottom:0',
       'background:rgba(10,10,10,0.96)','color:#ff6b6b',
@@ -419,7 +465,7 @@ class Server {
 
     var title = document.createElement('h2');
     title.style.cssText = 'color:#ff4757;margin:0;font-size:20px;';
-    title.textContent = '⚡ LiveFlow Pro — Build Error';
+    title.textContent = '⚡ Live Server Pro — Build Error';
 
     var msg = document.createElement('pre');
     msg.style.cssText = 'color:#ffa502;white-space:pre-wrap;margin:0;';
@@ -446,7 +492,7 @@ class Server {
   }
 
   function removeErrorOverlay() {
-    var el = document.getElementById('__liveflow_error_overlay__');
+    var el = document.getElementById('__Live Server Pro_error_overlay__');
     if (el) el.remove();
   }
 
@@ -457,34 +503,166 @@ class Server {
 
   // ─── Error responses ──────────────────────────────────────────────────────
 
+  _sendDirectoryListing(res, dirPath, urlPath) {
+    this.logger.debug(`DIR  ${urlPath} → directory listing`);
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    } catch (e) {
+      this._sendError(res, 500, 'Cannot read directory');
+      return;
+    }
+
+    // Sort: directories first, then files, both alphabetically
+    entries.sort((a, b) => {
+      if (a.isDirectory() !== b.isDirectory()) return a.isDirectory() ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    const parentPath = urlPath === '/' ? null : (urlPath.replace(/\/$/, '').split('/').slice(0, -1).join('/') || '/');
+    const isRoot = urlPath === '/' || urlPath === '';
+
+    const rows = entries.map(entry => {
+      const isDir = entry.isDirectory();
+      const icon = isDir ? '📁' : _getFileIcon(entry.name);
+      const href = (urlPath.replace(/\/$/, '') + '/' + entry.name).replace(/^\/\//, '/');
+      const label = entry.name + (isDir ? '/' : '');
+      return `<tr>
+        <td class="icon">${icon}</td>
+        <td class="name"><a href="${href}">${label}</a></td>
+        <td class="type">${isDir ? 'Folder' : (path.extname(entry.name).slice(1).toUpperCase() || 'File')}</td>
+      </tr>`;
+    }).join('\n');
+
+    const upRow = parentPath ? `<tr>
+        <td class="icon">⬆️</td>
+        <td class="name"><a href="${parentPath}">.. (parent folder)</a></td>
+        <td class="type">Folder</td>
+      </tr>` : '';
+
+    const body = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📂 ${urlPath} — Live Server Pro</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+    .header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; padding-bottom: 20px;
+      border-bottom: 1px solid #21262d;
+    }
+    .logo { font-size: 28px; }
+    .title-block h1 { font-size: 18px; font-weight: 700; color: #e6edf3; }
+    .title-block .breadcrumb { font-size: 13px; color: #8b949e; margin-top: 3px; font-family: monospace; }
+    .badge {
+      margin-left: auto; font-size: 11px; padding: 4px 10px;
+      background: #161b22; border: 1px solid #30363d; border-radius: 20px;
+      color: #a8e063; font-weight: 600; white-space: nowrap;
+    }
+    .tip {
+      background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+      padding: 12px 16px; margin-bottom: 20px;
+      font-size: 13px; color: #8b949e; line-height: 1.5;
+    }
+    .tip strong { color: #a8e063; }
+    table { width: 100%; border-collapse: collapse; background: #161b22;
+            border-radius: 10px; overflow: hidden; border: 1px solid #21262d; }
+    thead tr { background: #0d1117; border-bottom: 1px solid #21262d; }
+    thead th { padding: 12px 16px; text-align: left; font-size: 12px;
+               font-weight: 600; color: #8b949e; text-transform: uppercase;
+               letter-spacing: 0.05em; }
+    tbody tr { border-bottom: 1px solid #21262d; transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1c2128; }
+    td { padding: 11px 16px; font-size: 14px; }
+    td.icon { width: 36px; font-size: 18px; }
+    td.name a { color: #58a6ff; text-decoration: none; font-weight: 500; }
+    td.name a:hover { text-decoration: underline; color: #79c0ff; }
+    td.type { color: #6e7681; font-size: 12px; text-transform: uppercase;
+               letter-spacing: 0.05em; }
+    .footer { margin-top: 24px; text-align: center; font-size: 12px; color: #30363d; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo">⚡</div>
+      <div class="title-block">
+        <h1>Directory Listing</h1>
+        <div class="breadcrumb">${urlPath || '/'}</div>
+      </div>
+      <div class="badge">Live Server Pro</div>
+    </div>
+    <div class="tip">💡 <strong>No index.html found.</strong> Browse your files below or create an <code>index.html</code> in your project root to load it automatically.</div>
+    <table>
+      <thead><tr>
+        <th></th><th>Name</th><th>Type</th>
+      </tr></thead>
+      <tbody>
+        ${upRow}
+        ${rows}
+      </tbody>
+    </table>
+    <div class="footer">Live Server Pro — Live Development Server</div>
+  </div>
+</body>
+</html>`;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store');
+    res.writeHead(200);
+    res.end(body);
+  }
+
   _send404(res, urlPath) {
     this.logger.debug(`GET ${urlPath} → 404`);
     const body = `<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>404 Not Found — LiveFlow Pro</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d0d0d; color: #e0e0e0;
-         display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-  .card { text-align: center; padding: 60px 40px; }
-  .code { font-size: 120px; font-weight: 900; color: #2563eb; line-height: 1; }
-  h1 { font-size: 28px; margin: 16px 0 8px; }
-  p { color: #6b7280; font-size: 16px; }
-  .path { font-family: monospace; background: #1f1f1f; padding: 6px 12px; border-radius: 6px;
-          display: inline-block; margin: 12px 0; color: #60a5fa; }
-  a { color: #2563eb; text-decoration: none; margin-top: 24px; display: inline-block; }
-  a:hover { text-decoration: underline; }
-  .badge { font-size: 12px; color: #374151; margin-top: 40px; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 Not Found — Live Server Pro</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #c9d1d9;
+           display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .card { text-align: center; padding: 60px 40px; }
+    .code { font-size: 100px; font-weight: 900; color: #21262d; line-height: 1;
+            text-shadow: 0 0 60px rgba(88,166,255,0.15); }
+    .code span { color: #58a6ff; }
+    h1 { font-size: 24px; margin: 16px 0 8px; color: #e6edf3; }
+    p { color: #8b949e; font-size: 15px; margin-bottom: 8px; }
+    .path { font-family: monospace; background: #161b22; border: 1px solid #30363d;
+            padding: 6px 14px; border-radius: 6px; display: inline-block;
+            margin: 12px 0; color: #ff7b72; font-size: 14px; }
+    .actions { margin-top: 28px; display: flex; gap: 12px; justify-content: center; }
+    a.btn { color: #58a6ff; text-decoration: none; padding: 10px 20px;
+            border: 1px solid #30363d; border-radius: 8px; font-size: 14px;
+            background: #161b22; transition: all 0.2s; }
+    a.btn:hover { background: #1c2128; border-color: #58a6ff; }
+    .badge { font-size: 12px; color: #30363d; margin-top: 48px; }
+  </style>
 </head>
 <body>
   <div class="card">
-    <div class="code">404</div>
+    <div class="code"><span>4</span>0<span>4</span></div>
     <h1>File Not Found</h1>
     <div class="path">${urlPath}</div>
     <p>This file doesn't exist in the project root.</p>
-    <a href="/">← Back to home</a>
-    <div class="badge">Served by LiveFlow Pro</div>
+    <p>Make sure the path is correct and the file exists.</p>
+    <div class="actions">
+      <a class="btn" href="/">🏠 Go Home</a>
+    </div>
+    <div class="badge">Served by Live Server Pro</div>
   </div>
 </body>
 </html>`;

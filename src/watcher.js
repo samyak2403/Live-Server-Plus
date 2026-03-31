@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - File Watcher
+﻿/**
+ * Live Server Pro - File Watcher
  *
  * Uses chokidar for cross-platform, efficient file watching.
  * Features:

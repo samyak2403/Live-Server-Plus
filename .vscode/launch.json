@@ -1,4 +1,4 @@
-{
+﻿{
   "version": "0.2.0",
   "configurations": [
     {
@@ -13,7 +13,7 @@
       ],
       "preLaunchTask": "npm: install",
       "env": {
-        "LIVEFLOW_DEBUG": "true"
+        "Live Server Pro_DEBUG": "true"
       }
     }
   ]

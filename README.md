@@ -1,4 +1,4 @@
-# LiveFlow Pro
+﻿# Live Server Pro
 
 > ⚡ A production-ready, feature-rich Live Server alternative for VS Code with WebSocket live reload, HTTPS, QR code sharing, SPA support, and browser sync.
 
@@ -48,42 +48,42 @@
 ### Installation
 1. Install the extension from the VS Code Marketplace (or via `.vsix`)
 2. Open a project folder in VS Code
-3. Click **`$(broadcast) LiveFlow`** in the status bar, or use the command palette
+3. Click **`$(broadcast) Live Server Pro`** in the status bar, or use the command palette
 
 ### Quick Start
 ```
-Ctrl+Shift+P → "LiveFlow Pro: Start Server"
+Ctrl+Shift+P → "Live Server Pro: Start Server"
 ```
 
 ---
 
 ## Configuration
 
-All settings are under `liveflow.*` in your `settings.json`:
+All settings are under `Live Server Pro.*` in your `settings.json`:
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `liveflow.port` | `number` | `5500` | Port number (0 = auto-detect) |
-| `liveflow.https` | `boolean` | `false` | Enable HTTPS |
-| `liveflow.autoOpen` | `boolean` | `true` | Open browser on start |
-| `liveflow.rootPath` | `string` | `""` | Relative path from workspace root |
-| `liveflow.liveReload` | `boolean` | `true` | Enable live reload |
-| `liveflow.spaFallback` | `boolean` | `false` | Serve `index.html` on 404 |
-| `liveflow.basePath` | `string` | `"/"` | URL base path prefix |
-| `liveflow.showQRCode` | `boolean` | `true` | Print QR code for mobile |
-| `liveflow.gzip` | `boolean` | `true` | Enable gzip compression |
-| `liveflow.debounceDelay` | `number` | `200` | File watcher debounce (ms) |
-| `liveflow.browser` | `string` | `""` | Browser to open (`chrome`, `firefox`, etc.) |
+| `Live Server Pro.port` | `number` | `5500` | Port number (0 = auto-detect) |
+| `Live Server Pro.https` | `boolean` | `false` | Enable HTTPS |
+| `Live Server Pro.autoOpen` | `boolean` | `true` | Open browser on start |
+| `Live Server Pro.rootPath` | `string` | `""` | Relative path from workspace root |
+| `Live Server Pro.liveReload` | `boolean` | `true` | Enable live reload |
+| `Live Server Pro.spaFallback` | `boolean` | `false` | Serve `index.html` on 404 |
+| `Live Server Pro.basePath` | `string` | `"/"` | URL base path prefix |
+| `Live Server Pro.showQRCode` | `boolean` | `true` | Print QR code for mobile |
+| `Live Server Pro.gzip` | `boolean` | `true` | Enable gzip compression |
+| `Live Server Pro.debounceDelay` | `number` | `200` | File watcher debounce (ms) |
+| `Live Server Pro.browser` | `string` | `""` | Browser to open (`chrome`, `firefox`, etc.) |
 
 ### Example `settings.json`
 ```json
 {
-  "liveflow.port": 3000,
-  "liveflow.https": false,
-  "liveflow.autoOpen": true,
-  "liveflow.spaFallback": true,
-  "liveflow.showQRCode": true,
-  "liveflow.gzip": true
+  "Live Server Pro.port": 3000,
+  "Live Server Pro.https": false,
+  "Live Server Pro.autoOpen": true,
+  "Live Server Pro.spaFallback": true,
+  "Live Server Pro.showQRCode": true,
+  "Live Server Pro.gzip": true
 }
 ```
 
@@ -93,10 +93,10 @@ All settings are under `liveflow.*` in your `settings.json`:
 
 | Command | Description |
 |---|---|
-| `LiveFlow Pro: Start Server` | Start the development server |
-| `LiveFlow Pro: Stop Server` | Stop the running server |
-| `LiveFlow Pro: Restart Server` | Restart the server |
-| `LiveFlow Pro: Open Dashboard` | Open the server dashboard WebView |
+| `Live Server Pro: Start Server` | Start the development server |
+| `Live Server Pro: Stop Server` | Stop the running server |
+| `Live Server Pro: Restart Server` | Restart the server |
+| `Live Server Pro: Open Dashboard` | Open the server dashboard WebView |
 
 ---
 
@@ -106,7 +106,7 @@ Enable HTTPS with a self-signed certificate:
 
 ```json
 {
-  "liveflow.https": true
+  "Live Server Pro.https": true
 }
 ```
 
@@ -120,7 +120,7 @@ For single-page applications, enable the SPA fallback:
 
 ```json
 {
-  "liveflow.spaFallback": true
+  "Live Server Pro.spaFallback": true
 }
 ```
 
@@ -130,7 +130,7 @@ All routes (e.g. `/about`, `/products/1`) will serve `index.html`, allowing your
 
 ## Mobile Testing with QR Code
 
-When the server starts, a QR code is printed in the **LiveFlow Pro** Output Channel. Scan it with your phone (on the same Wi-Fi) to instantly open the site on mobile.
+When the server starts, a QR code is printed in the **Live Server Pro** Output Channel. Scan it with your phone (on the same Wi-Fi) to instantly open the site on mobile.
 
 ---
 
@@ -193,6 +193,6 @@ src/
 
 ## License
 
-MIT © LiveFlow Pro
+MIT © Live Server Pro
 
 # Live-Server-Plus

@@ -1,5 +1,5 @@
 /**
- * LiveFlow Pro - Dashboard WebView Panel
+ * Live Server Pro - Dashboard WebView Panel
  *
  * Creates a VS Code WebviewPanel that shows a rich,
  * interactive dashboard with server information, connection
@@ -12,7 +12,7 @@ const vscode = require('vscode');
 
 class DashboardPanel {
   static currentPanel = null;
-  static viewType = 'liveflowDashboard';
+  static viewType = 'Live Server ProDashboard';
 
   /**
    * Create or show the dashboard panel.
@@ -30,7 +30,7 @@ class DashboardPanel {
 
     const panel = vscode.window.createWebviewPanel(
       DashboardPanel.viewType,
-      'LiveFlow Pro — Dashboard',
+      'Live Server Pro — Dashboard',
       column,
       {
         enableScripts: true,
@@ -117,7 +117,7 @@ class DashboardPanel {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LiveFlow Pro Dashboard</title>
+  <title>Live Server Pro Dashboard</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -356,7 +356,7 @@ class DashboardPanel {
   <div class="header">
     <div>
       <div class="logo-icon">⚡</div>
-      <h1>LiveFlow Pro</h1>
+      <h1>Live Server Pro</h1>
       <div class="subtitle">Development Server Dashboard</div>
     </div>
     <div id="statusBadge" class="${isRunning ? 'status-badge running' : 'status-badge stopped'}">
@@ -423,7 +423,7 @@ class DashboardPanel {
     </div>
   </div>
 
-  <div class="footer">LiveFlow Pro v1.0.0 — Built for developers who care about speed ⚡</div>
+  <div class="footer">Live Server Pro v1.0.0 — Built for developers who care about speed ⚡</div>
 
   <script>
     const vscode = acquireVsCodeApi();

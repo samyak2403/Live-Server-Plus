@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - Port Finder
+﻿/**
+ * Live Server Pro - Port Finder
  *
  * Detects an available port starting from the preferred port.
  * Uses the `detect-port` package for reliable port checking.

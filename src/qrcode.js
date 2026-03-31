@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - QR Code Generator
+﻿/**
+ * Live Server Pro - QR Code Generator
  *
  * Generates a QR code for the server URL and prints it
  * to the VS Code Output Channel so developers can quickly

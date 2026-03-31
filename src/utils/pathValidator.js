@@ -1,5 +1,5 @@
-/**
- * LiveFlow Pro - Path Validator
+﻿/**
+ * Live Server Pro - Path Validator
  *
  * Prevents directory traversal attacks by ensuring that
  * all resolved file paths stay within the server root.
