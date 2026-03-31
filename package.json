@@ -2,7 +2,7 @@
   "name": "live-server-pro",
   "displayName": "Live Server Pro",
   "description": "⚡ A blazing-fast live development server with CSS hot-swap, WebSocket reload, HTTPS, QR code mobile access, SPA support, gzip compression, and a beautiful dashboard — the ultimate Live Server for modern web development.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "samyak2403",
   "icon": "assets/icon.png",
   "engines": {
